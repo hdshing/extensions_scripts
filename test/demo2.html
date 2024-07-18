@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <link href="https://oa.zcmtech.cn/res/admin/css/style.css?date=20240523" rel="stylesheet">
+    <link href="https://oa.zcmtech.cn/res/admin/css/roundabout.style.css?date=20240523" rel="stylesheet">
+    
+    <script src="https://oa.zcmtech.cn/res/admin/js/jquery-3.1.1.min.js?date=20240523"></script>
+    
+</head>
+<body>
+    
+<div id="home_wrap" class="wrap" style="opacity:0; position: relative; transform: translate(-50%, -50%); top: 45%;left: 50%;">
+    <div class="switcher-wrap slider">
+        <a class="prev jQ_sliderPrev" href=""></a>
+        <a class="next jQ_sliderNext" href=""></a>
+
+        <ul id="img-slider" style="height: 450px;">
+            <li class="img" th:each="bu:${indexBannerUrls}">
+                <img th:src="${bu}" />
+<!--                <div class="label">1</div>-->
+            </li>
+        </ul>
+
+        <ul class="switcher jQ_sliderSwitch jQ_sliderSwitch_1" style="position: relative; top: 150px;">
+<!--            <li class="active"><a href=""></a></li>-->
+            <li th:each="bu:${indexBannerUrls}"><a href=""></a></li>
+        </ul>
+    </div>
+</div>
+
+
+<script th:src="@{/res/admin/js/jquery.roundabout.js?date={resVer}(resVer=${resVer})}"></script>
+
+<script>
+    $(document).ready(function(){
+        // ul li:first-child
+        $(".jQ_sliderSwitch_1").find('li:first-child').addClass('active')
+        $('#img-slider li').bind({
+            reposition: function() {
+                var degrees = $(this).data('roundabout').degrees,
+                    roundaboutBearing = $(this).parent().data('roundabout').bearing,
+                    rotateY = Math.sin((roundaboutBearing - degrees) * (Math.PI/180)) * 9;
+
+                $(this).css({
+                    "-webkit-transform": 'rotate(' + rotateY + 'deg)',
+                    "-moz-transform": 'rotate(' + rotateY + 'deg)',
+                    "-ms-transform": 'rotate(' + rotateY + 'deg)',
+                    "-o-transform": 'rotate(' + rotateY + 'deg)',
+                    "transform": 'rotate(' + rotateY + 'deg)'
+                });
+            }
+        });
+
+        $('.jQ_sliderPrev').on('click', function(){
+            $('#img-slider').roundabout('animateToNextChild');
+            return false;
+        });
+
+        $('.jQ_sliderNext').on('click', function(){
+            $('#img-slider').roundabout('animateToPreviousChild');
+
+            return false;
+        });
+
+        $(window).resize(function(){
+            $('#img-slider').roundabout('animateToNextChild');
+        })
+
+        $('body').on('keyup', function(e) {
+            var keyCode = e.which || e.keyCode;
+
+            if(keyCode == 37) {
+                $('#img-slider').roundabout('animateToPreviousChild');
+                e.preventDefault();
+                return false;
+            } else if(keyCode == 39) {
+                $('#img-slider').roundabout('animateToNextChild');
+                e.preventDefault();
+                return false;
+            }
+        });
+
+        $('.jQ_sliderSwitch li').on('click', function() {
+            var $elem = $(this);
+            var index = $elem.index();
+
+            $('#img-slider').roundabout('animateToChild', index);
+
+            return false;
+        });
+
+        $('#img-slider').roundabout({
+            minScale: 0.4,
+            maxScale: 0.9,
+            duration: 1200,
+            autoplayDuration: 5000
+        }).bind({
+            animationEnd: function(e) {
+                var index = $('#img-slider').roundabout('getChildInFocus');
+                $('.jQ_sliderSwitch li').removeClass('active');
+                $('.jQ_sliderSwitch li').eq(index).addClass('active');
+            }
+        });
+
+        $('#home_wrap').css('opacity','1')
+
+    });
+</script>
+</body>
+</html>

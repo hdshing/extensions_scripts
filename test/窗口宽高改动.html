@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>改变div窗口大小</title>
+</head>
+
+<body>
+    <div id="resizable-div"
+        style="width: 100px; height: 50px; background-color: blue; position: relative;">
+        <div id="resize-handle"
+            style="width: 3px; height: 100%; background-color: red; position: absolute; right: 0px; cursor: ew-resize;">
+        </div>
+    </div>
+
+
+
+    <script>
+
+        const resizableDiv = document.getElementById('resizable-div');
+        const resizeHandle = document.getElementById('resize-handle');
+        let isResizing = false;
+        let startX;
+        let currentWidth;
+
+        // 添加过渡效果  
+        // resizableDiv.style.transition = 'width 0.25s ease-in-out';
+
+        resizeHandle.addEventListener('mousedown', (e) => {
+            isResizing = true;
+            startX = e.pageX; // 使用 pageX 以获取相对于文档的位置  
+            currentWidth = resizableDiv.offsetWidth;
+            console.log('点击拖动框 ',e)
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            if (!isResizing) return;
+
+            // 计算新的宽度  
+            const newWidth = currentWidth + (e.pageX - startX);
+
+            // 考虑边界情况  
+            const minWidth = 10; // 设置最小宽度  
+            const maxWidth = window.innerWidth - resizableDiv.offsetLeft - 10; // 考虑左边距和拖动条宽度  
+            const newValidWidth = Math.max(minWidth, Math.min(newWidth, maxWidth));
+
+            // 应用新的宽度  
+            resizableDiv.style.width = `${newValidWidth}px`;
+
+            // 更新当前宽度和起始点，以便下一次计算  
+            currentWidth = newValidWidth;
+            startX = e.pageX;
+        });
+
+        window.addEventListener('mouseup', () => {
+            isResizing = false;
+        });
+
+        window.addEventListener('mouseleave', () => {
+            isResizing = false;
+        });
+    </script>
+
+</body>
+
+</html>

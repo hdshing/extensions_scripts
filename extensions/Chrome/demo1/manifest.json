@@ -1,0 +1,32 @@
+{
+    "manifest_version": 3,
+    "name": "TopMost Extension",
+    "version": "1.0",
+    "description": "An extension to make the current browser window topmost.",
+    "permissions": [
+      "tabs",
+      "activeTab",
+      "windows"
+    ],
+    "background": {
+      "service_worker": "background.js"
+    },
+    "action": {
+      "default_popup": "popup.html",
+      "default_icon": {
+        "16": "icon.png",
+        "48": "icon.png",
+        "128": "icon.png"
+      }
+    },
+    "icons": {
+      "16": "icon.png",
+      "48": "icon.png",
+      "128": "icon.png"
+    },
+    "host_permissions": [
+      "http://*/*",
+      "https://*/*"
+    ]
+  }
+  

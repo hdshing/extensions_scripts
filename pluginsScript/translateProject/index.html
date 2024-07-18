@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>模拟网页-翻译</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+
+    <script src="./translate.js"></script>
+
+</head>
+
+<body>
+    <div>
+        <input id="testinp" type="text">
+    </div>
+    <div onclick="addToFavorites()">
+        <p>萨拉斯经历时间的辣椒水</p>
+    </div>
+    <style>
+        #fy_entry_container {
+            position: fixed;
+            background-color: aqua;
+            top: 500px;
+            right: 0;
+            border-top-left-radius: 16px;
+            border-bottom-left-radius: 16px;
+            width: 35px;
+            height: 34px;
+            display: flex;
+            align-items: center;
+            padding-left: 12px;
+            box-sizing: border-box;
+            transition: width 0.2s;
+            background-color: #1890ff;
+            opacity: 0.5;
+            cursor: pointer;
+
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        #fy_entry_container:hover {
+            width: 55px;
+            opacity: 1;
+        }
+
+        #fy_entry_container img {
+            width: 20px;
+            height: 20px;
+            pointer-events: none;
+        }
+
+        #fy_translate_tools_container {
+            position: fixed;
+            top: 45vh;
+            left: 100%;
+            display: flex;
+            flex-wrap: wrap;
+            z-index: 9980;
+            width: 300px;
+            box-shadow: 0 0 5px 1px rgba(0, 0, 0, 0.1);
+            background-color: #f2f4fb;
+            padding: 6px 8px 10px;
+            border-radius: 4px;
+            color: #333;
+            cursor: grab;
+            transition: left 0.5s;
+        }
+
+        .fy_tools_top,
+        .fy_tools_main,
+        .fy_tools_footer {
+            position: relative;
+            width: 100%;
+        }
+
+        .fy_tools_top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 6px;
+        }
+
+        .fy_tools_top .fy_title {
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .fy_tools_ctrl_box {
+            display: flex;
+            align-items: center;
+        }
+
+        #fy_tools_close {
+            font-size: 10px;
+            padding: 4px;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            filter: grayscale(100%);
+        }
+
+        #fy_tools_close:hover {
+            filter: grayscale(0%);
+            cursor: pointer;
+        }
+
+        .fy_tools_select_container {
+            display: flex;
+            align-items: center;
+            font-size: 13px;
+            margin-right: 5px;
+            border-radius: 4px;
+        }
+
+        .fy_tools_select_container img {
+            display: inline-block;
+            margin: auto 2px;
+            width: 16px;
+
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            user-drag: none;
+        }
+
+        .fy_tools_select_from {
+            position: relative;
+            letter-spacing: 0;
+            background-color: rgba(169, 173, 204, .1);
+            height: 20px;
+            padding: 0 6px;
+            border-radius: 4px;
+        }
+
+        .fy_tools_select_to {
+            position: relative;
+        }
+
+        #fy_tools_selected_active {
+            background-color: #ffffff;
+            font-size: 12px;
+            width: 30px;
+            height: 20px;
+            line-height: 20px;
+            border-radius: 4px;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        #fy_tools_ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 4px 0;
+            /* position: absolute;
+            top: 120%;
+            left: 0;
+            color: #333333;
+            z-index: 9990;
+            width: 30px;
+            text-align: center;
+            background-color: #fff;
+            box-shadow: 0 0 5px 1px rgba(0, 0, 0, 0.1);
+            font-size: 12px;
+            border-radius: 4px;
+            display: none;
+ */
+
+
+
+            list-style-type: none;
+            margin: 0;
+            padding: 4px 0;
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translate(-50%, -120%);
+            color: #333333;
+            z-index: 9990;
+            text-align: center;
+            background-color: #fff;
+            box-shadow: 0 0 5px 1px rgba(0, 0, 0, 0.1);
+            font-size: 12px;
+            border-radius: 4px;
+            width: 300px;
+            justify-content: center;
+            flex-wrap: wrap;
+            display: flex;
+        }
+
+        #fy_tools_ul li {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            line-height: 20px;
+            cursor: pointer;
+        }
+
+        #fy_tools_ul li:hover {
+            background-color: rgba(169, 173, 204, .3);
+        }
+
+        .fy_tools_text_content {
+            box-sizing: border-box;
+            width: 100%;
+            min-height: 100px;
+            padding: 6px 8px;
+            font-size: 14px;
+            border: none;
+            outline: none;
+            resize: none;
+            overflow: auto;
+            border-radius: 8px;
+        }
+
+        .fy_translate_result {
+            width: 100%;
+            min-height: auto;
+            background-color: rgba(169, 173, 204, .1);
+            display: none;
+        }
+    </style>
+
+    <div id="fy_entry_container">
+        <img src="data:image/png;base64,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"
+            alt="" />
+
+    </div>
+
+    <div id="fy_translate_tools_container">
+        <div class="fy_tools_top">
+            <div class="fy_title">翻译工具</div>
+            <div class="fy_tools_ctrl_box">
+                <div class="fy_tools_select_container">
+                    <div class="fy_tools_select_from">auto</div>
+                    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAAXNSR0IArs4c6QAAAxNJREFUeF7tmjFoFEEUht/bVNpYaGOvFsZGbEyl9mcZEMFAdPftCYIGsTCkSBMFSaM2mTdnOEUMiq0gNkaEVIKVxkoEMWCjQlC8Q+6ZlYuomOzb7F12NjvT7j9v3vvmnzlm5hAq3rDi9YMH4B1QcQJ+CVTcAH4T9EvAL4GKE+jbEqjX67VOpzOCiM9brZZtNpvfXWTdFwBERABgVgsWkXlEPMvMb1yD0HMAURRdRsQr/yn0AyKGxpjHLkHoKQAimgaAi+sU+IqZD2xFAEhEtwBgNKW4T8y8c0sBIKJdADALAMcVhU0w85RCt2mSXEsgiqJ9QRDcFpHDiozrzPx7Y1ToN0WyYQBxHA+JyB0A2JOWKSIOG2MepumK+L4hAN3f+LsAsCMl6W8AUGPmp0UUpxkzM4A4jkdFJFnzaW0pCILazMzMyzRhkd8zASCiSwBwTZHwooh8VOh6KkFEy8z3sgRVAyCi3QCwlCV4EVpEnDbGJBOlamoAYRgeDYLA2bX8Z7WdTudYo9GY1xDwADSUEo13QNWXABFtB4CvWscUqHvXbrcPNpvNL5oc1HtAEoyIhgFgUBO4QM0CMz/Rjp8JgDZomXQeQJlmqx+5egf0g2qZYnoHZJmtldvuSRE5kqXPZmsR8RkzT2rHVTsgDMNDK+f7F9rARer8YcifBv1xuNr3AYg4aIx5rdmH1Jtg9zC0AABDmsBFaURkzlp7Ujt+JgDaoL3URVF0AhHnlDEbzBwptb9kTgOIoug0IiZvjqlNRK5bay+kCv8ROAuAiM4BwE1lQVPMPKHU/iVzEgARJU/syVN7ahORcWvt1VThGgLnABDROABoX5DPM/ONjRbv3B7QvXJ7oClIRM5YazVPdOuGc8oByk2vjYgjxpj7GlBpGqcAxHG8X0QSB6x18foZAE4x86O0wrTfnQKQJL0OhPfJ3+60T16lBbAGhMWu7Xt+HHfOAaszNzY2tm15eXnvwMDAj1ar9bZff7R0FoDWwnl1HkBegmXv7x1Q9hnMm793QF6CZe/vHVD2Gcybv3dAXoJl7/8T5pwVUK1j/PAAAAAASUVORK5CYII="
+                        alt="">
+                    <div class="fy_tools_select_to">
+                        <div id="fy_tools_selected_active">中</div>
+                        <ul id="fy_tools_ul">
+                            <li value="zh">中</li>
+                            <li value="en">英</li>
+                        </ul>
+                    </div>
+                </div>
+                <div id="fy_tools_close">❌</div>
+            </div>
+        </div>
+        <div class="fy_tools_main">
+            <div class="fy_translate_from">
+                <textarea id="fy_translate_input" class="fy_tools_text_content" placeholder="输入翻译文字"></textarea>
+            </div>
+            <div class="fy_translate_to">
+                <div class="fy_tools_text_content fy_translate_result"></div>
+            </div>
+        </div>
+        <div class="fy_tools_footer">
+        </div>
+    </div>
+
+
+    <script>
+        function addToFavorites() {
+            if (window.sidebar && window.sidebar.addPanel) { // 对于Firefox  
+                window.sidebar.addPanel(document.title, window.location.href, '');
+            } else { // 对于其他浏览器，只能提供文字提示  
+                alert('请使用你的浏览器提供的功能将此页面添加到书签或收藏夹。');
+            }
+        }
+
+        var isTools = false
+        // 翻译小球-拖动事件
+        function bindEntryMove() {
+            let isMoveEntry = false
+            let topMoveY;
+            fy_entry_container.addEventListener('mousedown', (e) => {
+                isMoveEntry = true
+                topMoveY = e.clientY - fy_entry_container.getBoundingClientRect().top;
+            });
+            window.addEventListener('mousemove', (e) => {
+                if (isMoveEntry) {
+                    e.preventDefault();
+                    fy_entry_container.style.top = (e.clientY - topMoveY) + 'px'
+                }
+            });
+            // 当鼠标松开时
+            window.addEventListener('mouseup', () => {
+                isMoveEntry = false;
+            });
+
+            // 翻译tools出现及隐藏
+            fy_entry_container.addEventListener('mouseup', (e) => {
+                if (!isTools) {
+                    showTools()
+                }
+            });
+            fy_tools_close.onclick = function (e) {
+                closeTools()
+            }
+
+            const showTools = () => {
+                let rect = fy_translate_tools_container.getBoundingClientRect()
+                let left = rect.left - rect.width;
+                fy_translate_tools_container.style.left = (left) + 'px'
+                isTools = true
+                setTimeout(() => {
+                    fy_translate_tools_container.style.transition = 'none'
+                }, 600);
+            }
+            const closeTools = () => {
+                isTools = false
+                fy_translate_tools_container.style.transition = 'left 0.5s'
+                fy_translate_tools_container.style.left = '100%'
+            }
+
+            // 连续点击 两下``
+            let isBackquote = false;
+            window.addEventListener('keydown', (e) => {
+                if (e.code === 'Backquote' && isBackquote) {
+                    isTools ? closeTools() : showTools()
+                    isBackquote = false
+                    return
+                }
+                e.code === 'Backquote' && (isBackquote = true)
+                setTimeout(() => {
+                    isBackquote = false
+                }, 250);
+            });
+
+        }
+
+        // 输入翻译小工具框-拖动事件
+        function bingTranslateTools() {
+            let isMoveTools = false
+            let mouseToEleX;
+            let mouseToEleY;
+            fy_translate_tools_container.addEventListener('mousedown', (e) => {
+                if (e.target.classList.contains('fy_tools_text_content') || e.target.id === 'fy_tools_close') return;
+                isMoveTools = true
+                let rect = fy_translate_tools_container.getBoundingClientRect()
+                mouseToEleX = e.clientX - rect.left;
+                mouseToEleY = e.clientY - rect.top;
+                fy_translate_tools_container.style.cursor = 'grabbing'
+            });
+            window.addEventListener('mousemove', (e) => {
+                if (isMoveTools) {
+                    e.preventDefault();
+                    let t = (e.clientY - mouseToEleY) < 0 ? 0 : e.clientY - mouseToEleY;
+                    fy_translate_tools_container.style.top = t + 'px'
+                    fy_translate_tools_container.style.left = (e.clientX - mouseToEleX) + 'px'
+                }
+            });
+            // 当鼠标松开时
+            window.addEventListener('mouseup', () => {
+                isMoveTools = false;
+                fy_translate_tools_container.style.cursor = 'grab'
+            });
+        }
+
+        // 翻译输入触发事件
+        function bindInputChange() {
+            let timer = null
+            fy_translate_input.addEventListener('input', function (e) {
+                if (timer) {
+                    clearTimeout(timer)
+                }
+                timer = setTimeout(() => {
+                    console.log('Textarea content changed:', this.value);
+                    // fayinFunc()
+                }, 800);
+            });
+        }
+
+        // tools切换翻译语言
+        function bindChangeTranslateTo() {
+            fy_tools_ul.onclick = function (e) {
+                e.stopPropagation(); // 阻止事件冒泡
+                let value = e.target.getAttribute('value')
+                if (!value) return;
+                fy_tools_selected_active.setAttribute('value', value)
+                fy_tools_selected_active.textContent = e.target.textContent
+                fy_tools_ul.style.display = 'none'
+            }
+            fy_tools_selected_active.onclick = function (e) {
+                if (window.getComputedStyle(fy_tools_ul).display === 'none') {
+                    fy_tools_ul.style.display = 'block'
+                } else {
+                    fy_tools_ul.style.display = 'none'
+                }
+            }
+        }
+
+        function bindToolsEvent(){
+            console.log('????/')
+            // 入口小球事件
+            bindEntryMove()
+            // 翻译工具事件
+            bingTranslateTools()
+            // 输入改变事件
+            bindInputChange()
+            // 切换翻译语言事件
+            bindChangeTranslateTo()
+        }
+        bindToolsEvent()
+
+
+    </script>
+</body>
+
+</html>

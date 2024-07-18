@@ -1,0 +1,60 @@
+<!DOCTYPE html>  
+<html lang="en">  
+<head>  
+<meta charset="UTF-8">  
+<meta name="viewport" content="width=device-width, initial-scale=1.0">  
+<title>MacBook Style Buttons</title>  
+<style>  
+    /* 容器样式 */  
+    .window-buttons {  
+        display: flex;  
+        justify-content: flex-end;  
+        background-color: #f0f0f0; /* 类似MacBook窗口顶部栏的背景色 */  
+        padding: 5px;  
+        border-radius: 5px 5px 0 0; /* 顶部圆角 */  
+        box-shadow: 0 0 5px rgba(0,0,0,0.1); /* 轻微阴影效果 */  
+    }  
+  
+    /* 按钮样式 */  
+    .window-buttons button {  
+        background-color: transparent;  
+        border: none;  
+        outline: none;  
+        cursor: pointer;  
+        padding: 5px;  
+        margin-left: 5px;  
+        transition: background-color 0.2s ease; /* 过渡效果 */  
+    }  
+  
+    /* 关闭按钮样式 */  
+    .window-buttons .close-button {  
+        color: red; /* 红色文字 */  
+        font-weight: bold; /* 加粗文字 */  
+    }  
+  
+    /* 隐藏按钮样式 */  
+    .window-buttons .hide-button {  
+        color: black; /* 黑色文字 */  
+    }  
+  
+    /* 缩小按钮样式 */  
+    .window-buttons .minimize-button {  
+        color: gray; /* 灰色文字 */  
+    }  
+  
+    /* 鼠标悬停时的样式变化 */  
+    .window-buttons button:hover {  
+        background-color: rgba(0,0,0,0.1); /* 轻微背景色变化 */  
+    }  
+</style>  
+</head>  
+<body>  
+  
+<div class="window-buttons">  
+    <button class="close-button" onclick="alert('Close clicked!')">&times;</button>  
+    <button class="hide-button" onclick="alert('Hide clicked!')">&minus;</button>  
+    <button class="minimize-button" onclick="alert('Minimize clicked!')">&square;</button>  
+</div>  
+  
+</body>  
+</html>

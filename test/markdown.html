@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MarkDown to Html</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked@3.0.7/marked.min.js"></script>
+    <style>  
+        pre code {  
+          display: block;  
+          padding: 1em;  
+          background-color: #f8f8f8; /* 背景颜色 */  
+          color: #333; /* 文本颜色 */  
+          overflow-x: auto; /* 水平滚动条 */  
+        }  
+      </style>
+</head>
+
+<body>
+    <div id="markdown-content"></div>
+
+
+    <script>
+        setTimeout(() => {
+            $.get('./oa.md', function (response) {
+                console.log('response = ', response);
+                var htmlContent = marked(response);
+                $('#markdown-content').html(htmlContent);
+            });
+        }, 100);
+    </script>
+</body>
+
+</html>
